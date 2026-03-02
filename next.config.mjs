@@ -5,7 +5,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**", // allow any domain
+        hostname: "images.unsplash.com", // allow any domain
       },
     ],
   },

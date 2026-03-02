@@ -1,9 +1,8 @@
 import { MongoClient } from "mongodb";
-import { setServers } from "node:dns/promises";
 
-if (process.env.NODE_ENV === "development") {
-  setServers(["1.1.1.1", "8.8.8.8"]); // Cloudflare + Google DNS
-}
+// if (process.env.NODE_ENV === "development") {
+//   setServers(["1.1.1.1", "8.8.8.8"]); // Cloudflare + Google DNS
+// }
 
 if (!process.env.MONGODB_URI) {
   throw new Error("No mongodb uri found!");
