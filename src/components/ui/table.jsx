@@ -1,123 +1,123 @@
 "use client"
 
 import * as React from "react"
+import { XIcon } from "lucide-react"
+import * as SheetPrimitive from "@radix-ui/react-dialog" // Fixed import
 
 import { cn } from "@/lib/utils"
 
-function Table({
-  className,
-  ...props
-}) {
-  return (
-    <div data-slot="table-container" className="relative w-full overflow-x-auto">
-      <table
-        data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
-        {...props} />
-    </div>
-  );
+function Sheet({ ...props }) {
+  return <SheetPrimitive.Root data-slot="sheet" {...props} />;
 }
 
-function TableHeader({
-  className,
-  ...props
-}) {
-  return (
-    <thead
-      data-slot="table-header"
-      className={cn("[&_tr]:border-b", className)}
-      {...props} />
-  );
+function SheetTrigger({ ...props }) {
+  return <SheetPrimitive.Trigger data-slot="sheet-trigger" {...props} />;
 }
 
-function TableBody({
-  className,
-  ...props
-}) {
-  return (
-    <tbody
-      data-slot="table-body"
-      className={cn("[&_tr:last-child]:border-0", className)}
-      {...props} />
-  );
+function SheetClose({ ...props }) {
+  return <SheetPrimitive.Close data-slot="sheet-close" {...props} />;
 }
 
-function TableFooter({
-  className,
-  ...props
-}) {
-  return (
-    <tfoot
-      data-slot="table-footer"
-      className={cn("bg-muted/50 border-t font-medium [&>tr]:last:border-b-0", className)}
-      {...props} />
-  );
+function SheetPortal({ ...props }) {
+  return <SheetPrimitive.Portal data-slot="sheet-portal" {...props} />;
 }
 
-function TableRow({
-  className,
-  ...props
-}) {
+function SheetOverlay({ className, ...props }) {
   return (
-    <tr
-      data-slot="table-row"
+    <SheetPrimitive.Overlay
+      data-slot="sheet-overlay"
       className={cn(
-        "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
+        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-[#5D4037]/40 backdrop-blur-sm", // Brownish overlay with blur
         className
       )}
       {...props} />
   );
 }
 
-function TableHead({
+function SheetContent({
   className,
+  children,
+  side = "right",
+  showCloseButton = true,
   ...props
 }) {
   return (
-    <th
-      data-slot="table-head"
-      className={cn(
-        "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-        className
-      )}
+    <SheetPortal>
+      <SheetOverlay />
+      <SheetPrimitive.Content
+        data-slot="sheet-content"
+        className={cn(
+          // Furniture theme background and text
+          "bg-[#FDFBF9] text-[#5D4037] data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 shadow-2xl transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500",
+          
+          // Side orientations with orange-brown border accents
+          side === "right" &&
+            "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l border-orange-100 sm:max-w-sm",
+          side === "left" &&
+            "data-[state=closed]:slide-out-to-left data-[state=open]:slide-in-from-left inset-y-0 left-0 h-full w-3/4 border-r border-orange-100 sm:max-w-sm",
+          side === "top" &&
+            "data-[state=closed]:slide-out-to-top data-[state=open]:slide-in-from-top inset-x-0 top-0 h-auto border-b border-orange-100",
+          side === "bottom" &&
+            "data-[state=closed]:slide-out-to-bottom data-[state=open]:slide-in-from-bottom inset-x-0 bottom-0 h-auto border-t border-orange-100",
+          className
+        )}
+        {...props}>
+        {children}
+        {showCloseButton && (
+          <SheetPrimitive.Close
+            className="absolute top-4 right-4 rounded-full p-1 opacity-70 transition-all hover:opacity-100 hover:bg-orange-100 hover:text-orange-600 focus:outline-none disabled:pointer-events-none">
+            <XIcon className="size-5" />
+            <span className="sr-only">Close</span>
+          </SheetPrimitive.Close>
+        )}
+      </SheetPrimitive.Content>
+    </SheetPortal>
+  );
+}
+
+function SheetHeader({ className, ...props }) {
+  return (
+    <div
+      data-slot="sheet-header"
+      className={cn("flex flex-col gap-1.5 p-6 border-b border-orange-50", className)}
       {...props} />
   );
 }
 
-function TableCell({
-  className,
-  ...props
-}) {
+function SheetFooter({ className, ...props }) {
   return (
-    <td
-      data-slot="table-cell"
-      className={cn(
-        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
-        className
-      )}
+    <div
+      data-slot="sheet-footer"
+      className={cn("mt-auto flex flex-col gap-2 p-6 border-t border-orange-50 bg-white", className)}
       {...props} />
   );
 }
 
-function TableCaption({
-  className,
-  ...props
-}) {
+function SheetTitle({ className, ...props }) {
   return (
-    <caption
-      data-slot="table-caption"
-      className={cn("text-muted-foreground mt-4 text-sm", className)}
+    <SheetPrimitive.Title
+      data-slot="sheet-title"
+      className={cn("text-[#5D4037] text-xl font-bold tracking-tight", className)}
+      {...props} />
+  );
+}
+
+function SheetDescription({ className, ...props }) {
+  return (
+    <SheetPrimitive.Description
+      data-slot="sheet-description"
+      className={cn("text-stone-500 text-sm", className)}
       {...props} />
   );
 }
 
 export {
-  Table,
-  TableHeader,
-  TableBody,
-  TableFooter,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableCaption,
+  Sheet,
+  SheetTrigger,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetFooter,
+  SheetTitle,
+  SheetDescription,
 }

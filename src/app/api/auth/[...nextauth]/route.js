@@ -1,34 +1,31 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import CredentialsProvider from "next-auth/providers/credentials";
 
-const authOptions = {
+export const authOptions = {
   providers: [
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
-  ],
-  callbacks: {
-    async session({ session, token }) {
-      // Add user id to session
-      session.user.id = token.sub;
-      return session;
-    },
-    async jwt({ token, account, profile }) {
-      // Persist the Google access_token on first sign in
-      if (account) {
-        token.accessToken = account.access_token;
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "email" },
+        password: { label: "Password", type: "password" }
+      },
+      async authorize(credentials) {
+        if (credentials.email === "admin@furnihub.com" && credentials.password === "123456") {
+          return { id: "1", name: "Admin User", email: "admin@furnihub.com" };
+        }
+        return null;
       }
-      return token;
-    },
-  },
+    }),
+  ],
   pages: {
-    signIn: "/login", // custom login page
-    error: "/auth/error", // custom error page
+    signIn: "/login",
   },
-  secret: process.env.NEXTAUTH_SECRET,
 };
 
 const handler = NextAuth(authOptions);
-
 export { handler as GET, handler as POST };

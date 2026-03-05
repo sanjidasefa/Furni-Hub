@@ -1,113 +1,35 @@
 "use client";
-
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Field,
-  FieldDescription,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-import { Eye, EyeOff } from "lucide-react";
-import { signIn } from "next-auth/react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React from "react";
-import { useForm } from "react-hook-form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 export default function LoginPage() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
   const router = useRouter();
-  const [showPassword, setShowPassword] = React.useState(false);
 
-  const onSubmit = async (data) => {
-    const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data),
-    });
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    
+    // Step A: Save data to localStorage
+    const userData = { email, isLoggedIn: true };
+    localStorage.setItem("furni_user", JSON.stringify(userData));
+    
+    // Step B: Set a dummy cookie for middleware (if any)
+    document.cookie = "token=true; path=/";
 
-    const result = await res.json();
-
-    if (result.token) {
-      console.log(token);
-      // setToken(result.token);
-      alert("Login successful!");
-      router.push("/");
-    } else {
-      alert(result.error || "Login failed");
-    }
+    // Step C: Force Refresh and Redirect
+    // router.push-er cheye window.location beshi karkori ekhane
+    window.location.href = "/dashboard/create-product";
   };
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-gray-50 p-4">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Login to your account</CardTitle>
-          <CardDescription>
-            Enter your email and password to login
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <FieldGroup>
-              <Field>
-                <FieldLabel htmlFor="email">Email</FieldLabel>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  {...register("email", { required: true })}
-                />
-              </Field>
-
-              <Field>
-                <FieldLabel htmlFor="password">Password</FieldLabel>
-                <div className="relative">
-                  <Input
-                    id="password"
-                    type={showPassword ? "text" : "password"}
-                    {...register("password", { required: true })}
-                  />
-                  <button
-                    type="button"
-                    className="absolute right-2 top-1/2 -translate-y-1/2"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                  </button>
-                </div>
-              </Field>
-
-              <Field className="mt-10">
-                <Button type="submit">Login</Button>
-                <Button
-                  variant="outline"
-                  type="button"
-                  className="mt-2"
-                  onClick={() => signIn("google")}
-                >
-                  Login with Google
-                </Button>
-                <FieldDescription className="text-center mt-2">
-                  Don't have an account? <Link href="/signup">Sign up</Link>
-                </FieldDescription>
-              </Field>
-            </FieldGroup>
-          </form>
-        </CardContent>
-      </Card>
-    </main>
+    <div className="min-h-screen flex items-center justify-center bg-[#FDFBF9]">
+      <form onSubmit={handleLogin} className="p-10 bg-white shadow-xl rounded-3xl border border-orange-100 space-y-4 w-96">
+        <h2 className="text-2xl font-black text-[#5D4037] text-center">Admin Login</h2>
+        <Input name="email" type="email" placeholder="Email" required className="rounded-xl" />
+        <Input name="password" type="password" placeholder="Password" required className="rounded-xl" />
+        <Button type="submit" className="w-full bg-[#5D4037] rounded-xl font-bold py-6">Login Now</Button>
+      </form>
+    </div>
   );
 }

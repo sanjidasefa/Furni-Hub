@@ -1,47 +1,55 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { CalendarDays, Users, Sparkles } from "lucide-react";
+import { Hammer, Trees, Award } from "lucide-react";
 
 const features = [
   {
-    title: "Smart Event Planning",
+    title: "Master Craftsmanship",
     description:
-      "Plan, organize, and manage events seamlessly with modern tools designed for speed and reliability.",
-    icon: CalendarDays,
+      "Every piece is hand-finished by expert artisans with decades of experience in traditional woodworking.",
+    icon: Hammer,
   },
   {
-    title: "Audience Management",
+    title: "Sustainable Sourcing",
     description:
-      "Handle registrations, attendees, and communication in one centralized and secure platform.",
-    icon: Users,
+      "We use 100% ethically sourced solid wood, ensuring our forests stay healthy for future generations.",
+    icon: Trees,
   },
   {
-    title: "Premium Experience",
+    title: "Lifetime Quality",
     description:
-      "Deliver smooth and engaging event experiences with a focus on performance and usability.",
-    icon: Sparkles,
+      "Built to last. Our furniture combines timeless aesthetics with structural integrity that withstands years of use.",
+    icon: Award,
   },
 ];
 
 export default function AboutPage() {
   return (
-    <section className="container mx-auto px-4 py-16">
-      <div className="max-w-3xl">
-        <h1 className="text-4xl font-bold tracking-tight">About Next Event</h1>
-        <p className="mt-4 text-muted-foreground">
-          Next Event is a modern event management platform built to simplify how
-          events are created, managed, and experienced. From small meetups to
-          large-scale conferences, Next Event ensures efficiency, clarity, and
-          reliability at every step.
+    <section className="container mx-auto px-6 py-20 bg-[#FDFBF9]">
+      <div className="max-w-4xl">
+        <span className="text-orange-600 font-bold uppercase tracking-widest text-sm">
+          Our Story
+        </span>
+        <h1 className="mt-3 text-4xl md:text-6xl font-black tracking-tight text-[#5D4037]">
+          FurniHub: Where Art <br /> Meets Wood.
+        </h1>
+        <p className="mt-6 text-lg text-stone-600 leading-relaxed">
+          Founded in 2006, FurniHub started with a simple vision: to bring the warmth of 
+          natural wood into every home. We believe that furniture isn't just a utility—it's 
+          an inheritance. From small coffee tables to grand dining sets, we ensure 
+          quality, soul, and elegance in every grain.
         </p>
       </div>
 
-      <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Feature Cards */}
+      <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {features.map((feature) => (
-          <Card key={feature.title} className="rounded-2xl">
-            <CardContent className="p-6">
-              <feature.icon className="h-8 w-8 text-primary" />
-              <h3 className="mt-4 text-lg font-semibold">{feature.title}</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
+          <Card key={feature.title} className="rounded-[2.5rem] border-orange-50 bg-white shadow-xl shadow-orange-900/5 hover:border-orange-200 transition-all duration-300">
+            <CardContent className="p-8">
+              <div className="bg-orange-50 w-14 h-14 rounded-2xl flex items-center justify-center mb-6">
+                <feature.icon className="h-7 w-7 text-orange-600" />
+              </div>
+              <h3 className="text-xl font-bold text-[#5D4037]">{feature.title}</h3>
+              <p className="mt-3 text-stone-500 leading-relaxed text-sm">
                 {feature.description}
               </p>
             </CardContent>
@@ -49,15 +57,23 @@ export default function AboutPage() {
         ))}
       </div>
 
-      <div className="mt-16 max-w-3xl">
-        <h2 className="text-2xl font-semibold">Our Mission</h2>
-        <p className="mt-4 text-muted-foreground">
-          Our mission is to empower organizers with intuitive tools and a
-          scalable architecture, enabling them to focus on what truly matters:
-          creating memorable events. Next Event leverages modern web
-          technologies to deliver performance, security, and an exceptional user
-          experience.
-        </p>
+      <div className="mt-24 grid md:grid-cols-2 gap-12 items-center">
+        <div className="rounded-[3rem] overflow-hidden bg-stone-200 aspect-video relative shadow-2xl">
+
+           <div className="absolute inset-0 flex items-center justify-center text-stone-400 font-medium italic">
+             
+           </div>
+        </div>
+        
+        <div className="max-w-xl">
+          <h2 className="text-3xl font-bold text-[#5D4037]">Our Mission</h2>
+          <p className="mt-6 text-stone-600 leading-relaxed">
+            Our mission is to replace the "fast-furniture" culture with mindful, 
+            long-lasting craftsmanship. By leveraging modern design techniques and 
+            traditional joinery, we deliver products that prioritize the environment, 
+            security, and an exceptional aesthetic experience for your living space.
+          </p>
+        </div>
       </div>
     </section>
   );

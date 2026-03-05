@@ -1,17 +1,21 @@
-"use server";
+export const loginUser = (userData) => {
+  if (typeof window !== "undefined") {
+    localStorage.setItem("furni_user", JSON.stringify(userData));
+    document.cookie = `token=true; path=/; max-age=${60 * 60 * 24}`; 
+  }
+};
 
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
+export const logoutUser = () => {
+  if (typeof window !== "undefined") {
+    localStorage.removeItem("furni_user");
+    document.cookie = "token=; path=/; expires=Thu, 01 Jan 1970 00:00:01 GMT";
+  }
+};
 
-export async function logout() {
-  const cookieStore = await cookies();
-
-  cookieStore.set("token", "", {
-    path: "/",
-    maxAge: 0,
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-  });
-
-  redirect("/login");
-}
+export const getStoredUser = () => {
+  if (typeof window !== "undefined") {
+    const user = localStorage.getItem("furni_user");
+    return user ? JSON.parse(user) : null;
+  }
+  return null;
+};
