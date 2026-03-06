@@ -8,7 +8,10 @@ const ProductSchema = new mongoose.Schema({
   date: String,
   priority: String,
   imageUrl: String,
-}, { timestamps: true });
+}, { 
+  timestamps: true,
+  collection: 'product-collection' 
+});
 
 const Product = mongoose.models.Product || mongoose.model("Product", ProductSchema);
 export default Product;
