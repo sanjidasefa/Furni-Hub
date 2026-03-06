@@ -1,10 +1,10 @@
-import { mongoConnect } from "@/lib/mongoConnect";
+import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 // GET all events
 export async function GET() {
   try {
-    const { db, client } = await mongoConnect();
+    const { db, client } = await db();
     const events = await db.collection("events").find().toArray();
     // client.close();
 
@@ -30,7 +30,7 @@ export async function GET() {
 // POST new event
 export async function POST(req) {
   try {
-    const { db, client } = await mongoConnect();
+    const { db, client } = await db();
     const data = await req.json();
 
     // Basic validation
