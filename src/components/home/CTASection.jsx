@@ -21,22 +21,20 @@ export default function CTASection() {
 
             <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button 
-                size="xl" 
                 className="bg-orange-600 hover:bg-orange-700 text-white rounded-full px-10 py-7 text-lg shadow-lg shadow-orange-950/20 transition-all hover:scale-105"
                 asChild
               >
-                <Link href="/shop" className="flex items-center gap-2">
+                <Link href="/product" className="flex items-center gap-2">
                   Shop the Collection <ArrowRight className="h-5 w-5" />
                 </Link>
               </Button>
               
               <Button 
                 variant="outline" 
-                size="xl" 
-                className="border-white/20 text-white hover:bg-white/10 rounded-full px-10 py-7 text-lg backdrop-blur-sm"
+                className="border-white/20 text-white hover:bg-white/10 rounded-full px-10 py-7 text-lg backdrop-blur-sm transition-all"
                 asChild
               >
-                <Link href="/contact">View Showrooms</Link>
+                <Link href="/">View Showrooms</Link>
               </Button>
             </div>
           </div>

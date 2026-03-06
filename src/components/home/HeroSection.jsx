@@ -17,7 +17,8 @@ export default function HeroSection() {
           className="rounded-full py-1.5 px-4 border-orange-200 bg-orange-50 text-orange-700 font-medium mb-8 animate-in fade-in slide-in-from-bottom-4 duration-1000"
           asChild
         >
-          <Link href="/new-arrivals" className="flex items-center gap-2 group">
+          {/* Linked to /product instead of /new-arrivals */}
+          <Link href="/product" className="flex items-center gap-2 group">
             ✨ New Spring Collection 2026 
             <ArrowRight className="ml-1 size-3.5 transition-transform group-hover:translate-x-1" />
           </Link>
@@ -35,30 +36,27 @@ export default function HeroSection() {
         </p>
 
         {/* Action Buttons */}
-        <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-5">
-          <Button 
-            size="xl" 
-            className="w-full sm:w-auto rounded-full bg-orange-600 hover:bg-orange-700 text-white text-lg px-10 py-8 shadow-xl shadow-orange-200 transition-all hover:scale-105"
-            asChild
-          >
-            <Link href="/shop" className="flex items-center gap-2">
-              <ShoppingBag className="size-5" /> Shop Now
-            </Link>
-          </Button>
-          
-          <Button
-            variant="outline"
-            size="xl"
-            className="w-full sm:w-auto rounded-full border-orange-200 text-[#5D4037] hover:bg-orange-50 text-lg px-10 py-8 shadow-none"
-            asChild
-          >
-            <Link href="/collections" className="flex items-center gap-2">
-              <Armchair className="size-5" /> View Lookbook
-            </Link>
-          </Button>
-        </div>
-
-        {/* Social Proof / Stats */}
+       <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-5">
+  <Button 
+    className="w-full sm:w-auto h-16 rounded-full bg-orange-600 hover:bg-orange-700 text-white text-lg px-10 shadow-xl shadow-orange-200 transition-all hover:scale-105 active:scale-95 border-none"
+    asChild
+  >
+    <Link href="/product" className="flex items-center gap-2 font-bold">
+      <ShoppingBag className="size-5" /> 
+      <span>Shop Now</span>
+    </Link>
+  </Button>
+  <Button
+    variant="outline"
+    className="w-full sm:w-auto h-16 rounded-full border-2 border-orange-200 text-[#5D4037] hover:bg-orange-50 hover:border-orange-300 text-lg px-10 shadow-none transition-all hover:scale-105 active:scale-95 bg-transparent"
+    asChild
+  >
+    <Link href="/product" className="flex items-center gap-2 font-bold">
+      <Armchair className="size-5" /> 
+      <span>View Lookbook</span>
+    </Link>
+  </Button>
+</div>
         <div className="mt-16 flex items-center justify-center gap-8 border-t border-orange-100 pt-8">
             <div className="text-center">
                 <p className="text-2xl font-bold text-[#5D4037]">15k+</p>
