@@ -93,7 +93,7 @@ export default function ProductSection() {
         {/* Mobile View All Button */}
         <div className="mt-10 md:hidden">
             <Button className="w-full bg-orange-50 text-orange-700 hover:bg-orange-100 py-6 font-semibold">
-                View All Products
+              <Link href='/product'> View All Products</Link> 
             </Button>
         </div>
       </div>
