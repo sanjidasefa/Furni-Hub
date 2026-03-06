@@ -1,4 +1,4 @@
-import { mongoConnect } from "@/lib/mongoConnect";
+import { db } from "@/lib/db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
@@ -8,7 +8,7 @@ if (!JWT_SECRET) throw new Error("Please add JWT_SECRET in .env");
 
 export async function POST(req) {
   try {
-    const { client, db } = await mongoConnect();
+    const { client, db } = await db();
     const { email, password } = await req.json();
 
     if (!email || !password) {
