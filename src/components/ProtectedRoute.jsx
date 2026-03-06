@@ -11,7 +11,6 @@ export default function ProtectedRoute({ children }) {
   useEffect(() => {
     const user = getAuthUser();
     if (!user) {
-      // User na thakle login page-e pathabe
       router.replace("/login");
     } else {
       setAuthorized(true);

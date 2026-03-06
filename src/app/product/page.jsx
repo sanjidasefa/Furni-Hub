@@ -15,21 +15,25 @@ export default function ProductListingPage() {
 
   const categories = ["All", "Living Room", "Bedroom", "Office", "Dining"];
 
-  useEffect(() => {
-    async function getProducts() {
-      try {
-        const res = await fetch("/api/all-product");
-        if (!res.ok) throw new Error("Failed to fetch");
-        const data = await res.json();
-        setProducts(data);
-      } catch (error) {
-        console.error("Error fetching products:", error);
-      } finally {
-        setLoading(false);
+ useEffect(() => {
+  async function getProducts() {
+    try {
+      setLoading(true);
+      const res = await fetch("/api/product"); 
+        if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.details || "Failed to fetch");
       }
+      const data = await res.json();
+      setProducts(data);
+    } catch (error) {
+      console.error("Error fetching products:", error);
+    } finally {
+      setLoading(false);
     }
-    getProducts();
-  }, []);
+  }
+  getProducts();
+}, []);
 
   const filteredProducts = products.filter((product) => {
     const matchesSearch = product.title.toLowerCase().includes(searchQuery.toLowerCase());
