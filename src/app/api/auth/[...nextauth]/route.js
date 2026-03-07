@@ -15,8 +15,8 @@ export const authOptions = {
         password: { label: "Password", type: "password" }
       },
       async authorize(credentials) {
-        if (credentials.email === "admin@furnihub.com" && credentials.password === "123456") {
-          return { id: "1", name: "Admin User", email: "admin@furnihub.com" };
+        if (credentials.email === "admin@FurniHub.com" && credentials.password === "123456") {
+          return { id: "1", name: "Admin me", email: "admin@FurniHub.com" };
         }
         return null;
       }

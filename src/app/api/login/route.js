@@ -1,51 +1,34 @@
-import { mongoConnect } from "@/lib/mongoConnect";
+import { db } from "@/lib/db";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
 export async function POST(req) {
   try {
-    const { client, db } = await mongoConnect();
+    const { client, db } = await db();
     const { email, password } = await req.json();
-
-    if (!email || !password) {
-      return NextResponse.json({ error: "Required fields missing" }, { status: 400 });
-    }
-
-    // Connect to user-collection
-    const user = await db.collection("user-collection").findOne({ email });
-    
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    constuser= await db.collection("user-collection").findOne({ email });
+    if (!me || !(await bcrypt.compare(password, me.password))) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
-
-    // Create JWT Token
     const token = jwt.sign(
-      { id: user._id, email: user.email, role: user.role },
+      { id: me._id, name: me.mename, email: me.email, role: me.role },
       JWT_SECRET,
       { expiresIn: "1d" }
     );
-
-    const response = NextResponse.json({
-      message: "Login successful",
-      user: { id: user._id, name: user.username, email: user.email, role: user.role }
-    });
-
-    // Set Secure HttpOnly Cookie
+    const response = NextResponse.json({ message: "Login successful" });
     response.cookies.set({
       name: "token",
       value: token,
-      httpOnly: true,
+      httpOnly: true, 
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
       path: "/",
-      maxAge: 86400 // 1 day
+      maxAge: 86400,
     });
-
     return response;
   } catch (error) {
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json({ error: "Server Error" }, { status: 500 });
   }
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useMemo } from "react"
+import { usememo } from "react"
 import { cva } from "class-variance-authority";
 import { cn } from "@/lib/utils"
 import { Label } from "@/components/ui/label"
@@ -151,7 +151,7 @@ function FieldSeparator({ children, className, ...props }) {
 }
 
 function FieldError({ className, children, errors, ...props }) {
-  const content = useMemo(() => {
+  const content = usememo(() => {
     if (children) return children
     if (!errors?.length) return null
     const uniqueErrors = [...new Map(errors.map((error) => [error?.message, error])).values()]

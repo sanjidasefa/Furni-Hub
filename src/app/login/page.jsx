@@ -1,41 +1,31 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { meouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Armchair, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const router = useRouter();
+  const router = meouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   const handleLogin = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
-    const email = e.target.email.value;
+  const email = e.target.email.value;
     const password = e.target.password.value;
-
-    try {
+  try {
       const res = await fetch("/api/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
       });
-
       const data = await res.json();
-
-      if (!res.ok) {
+    if (!res.ok) {
         throw new Error(data.error || "Login failed");
       }
-
-      // Success! Save user data to localStorage for Header use
-      localStorage.setItem("furni_user", JSON.stringify(data.user));
-      
-      // Redirect to dashboard
       window.location.href = "/dashboard/manage-product";
     } catch (err) {
       setError(err.message);
@@ -68,7 +58,7 @@ export default function LoginPage() {
               <label className="text-xs font-black text-[#5D4037] uppercase ml-1">Email Address</label>
               <div className="relative">
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-stone-400" size={18} />
-                <Input name="email" type="email" placeholder="admin@furnihub.com" required className="pl-12 py-7 rounded-2xl border-stone-100 bg-stone-50/50" />
+                <Input name="email" type="email" placeholder="admin@FurniHub.com" required className="pl-12 py-7 rounded-2xl border-stone-100 bg-stone-50/50" />
               </div>
             </div>
 

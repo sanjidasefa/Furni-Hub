@@ -1,9 +1,9 @@
-import { mongoConnect } from "@/lib/mongoConnect";
+import { db } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const { db, client } = await mongoConnect();
+    const { db, client } = await db();
     const events = await db.collection("events").find().toArray();
     const formattedEvents = events.map((event) => ({
       id: event._id.toString(),
@@ -25,7 +25,7 @@ export async function GET() {
 
 export async function POST(req) {
   try {
-    const { db, client } = await mongoConnect();
+    const { db, client } = await db();
     const data = await req.json();
     if (!data.title || !data.date || !data.location) {
       client.close();

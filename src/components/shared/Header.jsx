@@ -1,42 +1,52 @@
 "use client";
 import { useState, useEffect } from "react";
-import { Armchair, Menu, X, LogOut, User, PlusCircle, LayoutDashboard, ChevronDown } from "lucide-react";
+import { Armchair, menu, X, LogOut, me, PlusCircle, LayoutDashboard, ChevronDown } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, meouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { getStoredUser, logoutUser } from "@/service/logout";
-// Assuming you have shadcn dropdown-menu components
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  Dropdownmenu,
+  DropdownmenuContent,
+  DropdownmenuItem,
+  DropdownmenuLabel,
+  DropdownmenuSeparator,
+  DropdownmenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
 export default function Header() {
   const pathname = usePathname();
-  const [user, setUser] = useState(null);
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const router = meouter();
+  const [me, setme] = useState(null);
+  const [ismenuOpen, setIsmenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // 1. CheckuserSession via API
   useEffect(() => {
     setMounted(true);
-    setUser(getStoredUser());
-  }, []);
+    const checkme = async () => {
+      try {
+        const res = await fetch("/api/me");
+        const data = await res.json();
+        setme(data.me);
+      } catch (error) {
+        setme(null);
+      }
+    };
+    checkme();
+  }, [pathname]); // Path change holei abar check korbe login status
 
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [pathname]);
-
-  const handleLogout = () => {
-    logoutUser();
-    setUser(null);
-    window.location.href = "/login";
+  // 2. Logout Handler
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+      setme(null);
+      setIsmenuOpen(false);
+      window.location.href = "/login"; // Force redirect to clear any middleware state
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
   };
 
-  // 4+ Core Routes
   const navLinks = [
     { title: "Home", url: "/" },
     { title: "Collections", url: "/product" },
@@ -44,6 +54,7 @@ export default function Header() {
     { title: "Contact", url: "/contact" },
   ];
 
+  // Hydration mismatch prevent korar jonno
   if (!mounted) return <div className="h-20 bg-white" />;
 
   return (
@@ -73,101 +84,117 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Action Buttons & Dropdown */}
+        {/* Desktop Profile / Auth Buttons */}
         <div className="flex items-center gap-3">
-          {user ? (
+          {me ? (
             <div className="hidden md:block">
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+              <Dropdownmenu>
+                <DropdownmenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center gap-2 focus:ring-0">
                     <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
-                      <User size={18} />
+                      <me size={18} />
                     </div>
-                    <span className="text-sm font-semibold text-[#5D4037]">{user?.name || 'My Account'}</span>
+                    <span className="text-sm font-semibold text-[#5D4037]">{me?.name || 'Account'}</span>
                     <ChevronDown size={14} className="text-stone-400" />
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 mt-2 rounded-xl">
-                  <DropdownMenuLabel className="font-normal">
+                </DropdownmenuTrigger>
+                <DropdownmenuContent align="end" className="w-56 mt-2 rounded-xl">
+                  <DropdownmenuLabel>
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user?.name}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                      <p className="text-sm font-medium leading-none">{me?.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{me?.email}</p>
                     </div>
-                  </DropdownMenuLabel>
-                  <DropdownMenuSeparator />
+                  </DropdownmenuLabel>
+                  <DropdownmenuSeparator />
                   <Link href="/dashboard/create-product">
-                    <DropdownMenuItem className="cursor-pointer gap-2">
+                    <DropdownmenuItem className="cursor-pointer gap-2">
                       <PlusCircle size={16} /> Add Product
-                    </DropdownMenuItem>
+                    </DropdownmenuItem>
                   </Link>
                   <Link href="/dashboard/manage-product">
-                    <DropdownMenuItem className="cursor-pointer gap-2">
+                    <DropdownmenuItem className="cursor-pointer gap-2">
                       <LayoutDashboard size={16} /> Manage Products
-                    </DropdownMenuItem>
+                    </DropdownmenuItem>
                   </Link>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer gap-2">
+                  <DropdownmenuSeparator />
+                  <DropdownmenuItem onClick={handleLogout} className="text-red-600 cursor-pointer gap-2 font-bold">
                     <LogOut size={16} /> Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  </DropdownmenuItem>
+                </DropdownmenuContent>
+              </Dropdownmenu>
             </div>
           ) : (
             <div className="hidden md:flex items-center gap-2">
-              <Link href="/register">
-                <Button variant="ghost" className="text-[#5D4037] font-bold">Register</Button>
-              </Link>
-              <Link href="/login">
-                <Button className="bg-[#5D4037] hover:bg-[#4a332c] text-white rounded-xl px-6">Login</Button>
-              </Link>
+              <Link href="/signup"><Button variant="ghost" className="text-[#5D4037] font-bold">signup</Button></Link>
+              <Link href="/login"><Button className="bg-[#5D4037] hover:bg-[#4a332c] text-white rounded-xl px-6">Login</Button></Link>
             </div>
           )}
 
-          {/* Mobile Menu Toggle */}
-          <button 
-            className="md:hidden p-2 bg-orange-50 rounded-lg text-orange-600"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-          >
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          {/* Mobile menu Toggle */}
+          <button className="md:hidden p-2 text-orange-600" onClick={() => setIsmenuOpen(!ismenuOpen)}>
+            {ismenuOpen ? <X size={24} /> : <menu size={24} />}
           </button>
         </div>
       </div>
 
-      {/* --- MOBILE MENU --- */}
-      <div 
-        className={`md:hidden absolute left-0 w-full bg-white border-b border-orange-100 shadow-xl transition-all duration-300 ${
-          isMenuOpen ? "top-20 opacity-100" : "top-[-500px] opacity-0 pointer-events-none"
-        }`}
+      {/* Mobile menu */}
+    {/* Mobile menu */}
+<div className={`md:hidden absolute left-0 w-full bg-white border-b border-orange-100 shadow-xl transition-all duration-300 ${
+  ismenuOpen ? "top-20 opacity-100" : "top-[-600px] opacity-0 pointer-events-none"
+}`}>
+  <div className="p-4 flex flex-col gap-2">
+    {/* Regular Nav Links */}
+    {navLinks.map((item) => (
+      <Link 
+        key={item.url} 
+        href={item.url} 
+        onClick={() => setIsmenuOpen(false)}
+        className="p-3 font-bold hover:bg-orange-50 rounded-lg text-[#5D4037]"
       >
-        <div className="p-4 flex flex-col gap-2">
-          {navLinks.map((item) => (
-            <Link key={item.url} href={item.url} className="p-3 font-bold hover:bg-orange-50 rounded-lg">
-              {item.title}
-            </Link>
-          ))}
-          
-          {user && (
-            <>
-              <div className="h-[1px] bg-orange-100 my-2" />
-              <Link href="/dashboard/create-product" className="p-3 font-bold text-orange-600 flex gap-2"><PlusCircle size={20}/> Add Product</Link>
-              <Link href="/dashboard/manage-product" className="p-3 font-bold text-orange-600 flex gap-2"><LayoutDashboard size={20}/> Manage Products</Link>
-            </>
-          )}
-
-          <div className="pt-4 mt-2 border-t border-orange-50">
-            {user ? (
-              <Button onClick={handleLogout} className="w-full bg-red-500 hover:bg-red-600 text-white py-6 rounded-xl font-bold gap-2">
-                <LogOut size={18} /> Logout ({user.email})
-              </Button>
-            ) : (
-              <div className="flex flex-col gap-2">
-                 <Link href="/login"><Button className="w-full bg-[#5D4037] py-6 rounded-xl">Login</Button></Link>
-                 <Link href="/register"><Button variant="outline" className="w-full py-6 rounded-xl">Register</Button></Link>
-              </div>
-            )}
-          </div>
+        {item.title}
+      </Link>
+    ))}
+    <div className="pt-4 mt-2 border-t border-orange-50">
+      {me ? (
+        <div className="flex flex-col gap-2">
+          <Link 
+            href="/dashboard/create-product" 
+            onClick={() => setIsmenuOpen(false)}
+            className="p-3 font-bold text-orange-600 flex items-center gap-2 hover:bg-orange-50 rounded-lg"
+          >
+            <PlusCircle size={20}/> Add Product
+          </Link>
+          <Link 
+            href="/dashboard/manage-product" 
+            onClick={() => setIsmenuOpen(false)}
+            className="p-3 font-bold text-orange-600 flex items-center gap-2 hover:bg-orange-50 rounded-lg"
+          >
+            <LayoutDashboard size={20}/> Manage Products
+          </Link>
+          <Button 
+            onClick={handleLogout} 
+            className="w-full bg-red-500 hover:bg-red-600 text-white py-6 rounded-xl font-bold flex items-center justify-center gap-2 mt-2"
+          >
+            <LogOut size={18} /> Logout ({me.name})
+          </Button>
         </div>
-      </div>
+      ) : (
+        <div className="flex flex-col gap-3">
+          <Link href="/login" onClick={() => setIsmenuOpen(false)}>
+            <Button className="w-full bg-[#5D4037] hover:bg-[#4a332c] py-6 rounded-xl font-bold text-white shadow-lg">
+              Login to Admin
+            </Button>
+          </Link>
+          <Link href="/signup" onClick={() => setIsmenuOpen(false)}>
+            <Button variant="outline" className="w-full border-[#5D4037] text-[#5D4037] py-6 rounded-xl font-bold hover:bg-stone-50">
+              Create New Account
+            </Button>
+          </Link>
+        </div>
+      )}
+    </div>
+  </div>
+</div>
     </header>
   );
 }

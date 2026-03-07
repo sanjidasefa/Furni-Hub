@@ -5,7 +5,7 @@
 
 // const JWT_SECRET = process.env.JWT_SECRET;
 
-// export async function getAuthUser() {
+// export async function getAuthme() {
 //   const cookieStore = await cookies();
 //   const token = cookieStore.get("token")?.value;
 
@@ -18,11 +18,11 @@
 //     return null;
 //   }
 // }
-// src/service/getAuthUser.js
-export const getAuthUser = () => {
+// src/service/getAuthme.js
+export const getAuthme = () => {
   if (typeof window !== "undefined") {
-    const user = localStorage.getItem("furni_user");
-    return user ? JSON.parse(user) : null;
+    constuser= localStorage.getItem("furni_me");
+    returnuser? JSON.parse(me) : null;
   }
   return null;
 };

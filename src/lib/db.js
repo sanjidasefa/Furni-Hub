@@ -1,14 +1,14 @@
-import mongoose from "mongoose";
+import { MongoClient } from "mongodb";
 
-const MONGODB_URI = process.env.MONGODB_URI;
+const uri = process.env.MONGODB_URI;
+let client;
+let dbInstance;
 
-export const db = async () => {
-  try {
-    if (mongoose.connection.readyState >= 1) return;
-    await mongoose.connect(MONGODB_URI); 
-     console.log("✅ MongoDB Connected Successfully!");
-  } catch (error) {
-    console.error("❌ MongoDB Connection Error:", error.message);
-    throw error;
+export async function db() {
+  if (dbInstance) return dbInstance;
+  if (!client) {
+    client = await MongoClient.connect(uri);
   }
-};
+  dbInstance = client.db("FurniHub");
+  return dbInstance;
+}
