@@ -23,22 +23,23 @@ export default function ProductDetailsPage() {
   const [quantity, setQuantity] = useState(1);
 
   useEffect(() => {
-    async function fetchProduct() {
-      try {
-        // Note: In a real app, you'd fetch by ID directly: /api/product/${id}
-        const res = await fetch(`/api/all-product`);
-        const data = await res.json();
-        const singleProduct = data.find((item) => item.id.toString() === id);
-        setProduct(singleProduct);
-      } catch (error) {
-        console.error("Error fetching product details:", error);
-      } finally {
-        setLoading(false);
-      }
+  async function fetchProduct() {
+    try {
+      // Direct dynamic API call
+      const res = await fetch(`/api/product/${id}`);
+      
+      if (!res.ok) throw new Error("Product not found");
+      
+      const data = await res.json();
+      setProduct(data); 
+    } catch (error) {
+      console.error("Error:", error.message);
+    } finally {
+      setLoading(false);
     }
-    fetchProduct();
-  }, [id]);
-
+  }
+  if (id) fetchProduct();
+}, [id]);
   if (loading) return (
     <div className="min-h-screen flex items-center justify-center bg-[#FDFBF9]">
       <div className="h-12 w-12 border-4 border-orange-200 border-t-orange-600 rounded-full animate-spin" />
