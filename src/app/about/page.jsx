@@ -30,7 +30,7 @@ export default function AboutPage() {
           Our Story
         </span>
         <h1 className="mt-3 text-4xl md:text-6xl font-black tracking-tight text-[#5D4037]">
-          FurniHub: Where Art <br /> Meets Wood.
+          FurniHub: Where Art <br /> meets Wood.
         </h1>
         <p className="mt-6 text-lg text-stone-600 leading-relaxed">
           Founded in 2006, FurniHub started with a simple vision: to bring the warmth of 

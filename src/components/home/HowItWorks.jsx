@@ -1,10 +1,10 @@
-import { UserCheck, Armchair, Truck } from "lucide-react";
+import { meCheck, Armchair, Truck } from "lucide-react";
 
 const steps = [
   {
     title: "Create Account",
     description: "Sign up securely to save your favorite designs and track your orders.",
-    icon: <UserCheck className="h-8 w-8 text-orange-600" />,
+    icon: <meCheck className="h-8 w-8 text-orange-600" />,
   },
   {
     title: "Choose Furniture",

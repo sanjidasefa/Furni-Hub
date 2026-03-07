@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState, usememo } from "react";
 import Image from "next/image";
 import { Loader2, PackageOpen, Search } from "lucide-react";
 import Link from "next/link";
@@ -25,7 +25,7 @@ export default function ProductListingPage() {
     getProducts();
   }, []);
 
-  const filteredItems = useMemo(() => {
+  const filteredItems = usememo(() => {
     let result = [...products];
     if (search)
       result = result.filter((p) =>
@@ -72,7 +72,7 @@ export default function ProductListingPage() {
         >
           <option value="All">All Categories</option>
           <option value="High">Premium</option>
-          <option value="Medium">Modern</option>
+          <option value="medium">Modern</option>
           <option value="Low">Classic</option>
         </select>
         <select

@@ -98,7 +98,7 @@ export default function ProductDetailsPage() {
               {product.title}
             </h1>
 
-            {/* META INFO (Price & Date) */}
+            {/* meTA INFO (Price & Date) */}
             <div className="flex items-center gap-8 mb-8">
               <div>
                 <p className="text-xs uppercase tracking-widest text-stone-400 font-bold mb-1">Price</p>

@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { meouter } from "next/navigation";
 import { Loader2, PlusCircle, Image as ImageIcon, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function AddProductPage() {
-  const router = useRouter();
+  const router = meouter();
   const [mounted, setMounted] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -26,9 +26,9 @@ export default function AddProductPage() {
 
   useEffect(() => {
     setMounted(true);
-    const savedUser = localStorage.getItem("furni_user");
+    const savedme = localStorage.getItem("furni_me");
     
-    if (!savedUser) {
+    if (!savedme) {
       router.replace("/login");
     } else {
       setIsAuthorized(true);
@@ -79,7 +79,7 @@ export default function AddProductPage() {
           </div>
         </div>
 
-        {/* Success Toast / Message */}
+        {/* Success Toast / message */}
         {showSuccess && (
           <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-2xl flex items-center gap-3 text-green-700 animate-in fade-in slide-in-from-top-4">
             <CheckCircle2 size={20} />
