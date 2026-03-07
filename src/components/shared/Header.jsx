@@ -100,7 +100,7 @@ export default function Header() {
                       <PlusCircle size={16} /> Add Product
                     </DropdownMenuItem>
                   </Link>
-                  <Link href="/dashboard/all-product">
+                  <Link href="/dashboard/manage-product">
                     <DropdownMenuItem className="cursor-pointer gap-2">
                       <LayoutDashboard size={16} /> Manage Products
                     </DropdownMenuItem>
@@ -150,7 +150,7 @@ export default function Header() {
             <>
               <div className="h-[1px] bg-orange-100 my-2" />
               <Link href="/dashboard/create-product" className="p-3 font-bold text-orange-600 flex gap-2"><PlusCircle size={20}/> Add Product</Link>
-              <Link href="/dashboard/all-product" className="p-3 font-bold text-orange-600 flex gap-2"><LayoutDashboard size={20}/> Manage Products</Link>
+              <Link href="/dashboard/manage-product" className="p-3 font-bold text-orange-600 flex gap-2"><LayoutDashboard size={20}/> Manage Products</Link>
             </>
           )}
 

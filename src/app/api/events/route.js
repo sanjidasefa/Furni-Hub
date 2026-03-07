@@ -1,13 +1,10 @@
-import { db } from "@/lib/db";
+import { mongoConnect } from "@/lib/mongoConnect";
 import { NextResponse } from "next/server";
 
-// GET all events
 export async function GET() {
   try {
-    const { db, client } = await db();
+    const { db, client } = await mongoConnect();
     const events = await db.collection("events").find().toArray();
-    // client.close();
-
     const formattedEvents = events.map((event) => ({
       id: event._id.toString(),
       title: event.title,
@@ -15,8 +12,7 @@ export async function GET() {
       location: event.location,
       image: event.image,
       description: event.description,
-    }));
-
+    }))
     return NextResponse.json(formattedEvents);
   } catch (error) {
     console.error(error);
@@ -27,13 +23,10 @@ export async function GET() {
   }
 }
 
-// POST new event
 export async function POST(req) {
   try {
-    const { db, client } = await db();
+    const { db, client } = await mongoConnect();
     const data = await req.json();
-
-    // Basic validation
     if (!data.title || !data.date || !data.location) {
       client.close();
       return NextResponse.json(
@@ -41,12 +34,10 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-
     const result = await db.collection("events").insertOne({
       ...data,
       createdAt: new Date(),
     });
-
     client.close();
     return NextResponse.json(
       { message: "Event created", id: result.insertedId },

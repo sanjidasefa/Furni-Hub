@@ -4,11 +4,22 @@ import { Button } from "@/components/ui/button";
 import { Trash2, Edit, Package } from "lucide-react";
 
 export default function ManageProducts() {
-  const [products, setProducts] = useState([
-    { id: 1, title: "Velvet Sofa", price: 450, category: "Living Room" },
-    { id: 2, title: "Wooden Table", price: 200, category: "Dining" },
-  ]);
-
+  const [products, setProducts] = useState([]); 
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    async function fetchProducts() {
+      try {
+        const res = await fetch("/api/product");
+        const data = await res.json();
+        setProducts(data);
+      } catch (err) {
+        console.error("Fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProducts();
+  }, []);
   const deleteProduct = (id) => {
     if(confirm("Are you sure?")) {
       setProducts(products.filter(p => p.id !== id));
@@ -21,7 +32,6 @@ export default function ManageProducts() {
         <Package className="text-orange-600 h-8 w-8" />
         <h1 className="text-3xl font-black text-[#5D4037]">Manage All Products</h1>
       </div>
-
       <div className="bg-white rounded-[2rem] border border-orange-100 overflow-hidden shadow-sm">
         <table className="w-full text-left">
           <thead className="bg-orange-50 text-[#5D4037] font-bold">
@@ -34,18 +44,14 @@ export default function ManageProducts() {
           </thead>
           <tbody>
             {products.map((p) => (
-              <tr key={p.id} className="border-t border-orange-50 hover:bg-orange-50/30 transition-colors">
-                <td className="p-6 font-semibold text-[#5D4037]">{p.title}</td>
-                <td className="p-6 text-stone-500">{p.category}</td>
-                <td className="p-6 font-bold text-orange-600">${p.price}</td>
-                <td className="p-6 flex gap-3">
-                  <Button variant="ghost" className="text-blue-600 hover:bg-blue-50"><Edit size={18} /></Button>
-                  <Button onClick={() => deleteProduct(p.id)} variant="ghost" className="text-red-600 hover:bg-red-50">
-                    <Trash2 size={18} />
-                  </Button>
-                </td>
-              </tr>
-            ))}
+  <tr key={p._id}>
+    <td className="p-6">{p.title}</td>
+  
+    <Button onClick={() => deleteProduct(p._id)}> 
+      <Trash2 size={18} />
+    </Button>
+  </tr>
+))}
           </tbody>
         </table>
       </div>

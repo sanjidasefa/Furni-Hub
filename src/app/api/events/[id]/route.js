@@ -1,4 +1,4 @@
-import { db } from "@/lib/db";
+import { mongoConnect } from "@/lib/mongoConnect";
 import { ObjectId } from "mongodb";
 import { NextResponse } from "next/server";
 
@@ -7,7 +7,7 @@ export async function GET(req, context) {
   try {
     const { id } = await context.params;
 
-    const { client, db } = await db();
+    const { client, db } = await mongoConnect();
     const event = await db
       .collection("events")
       .findOne({ _id: new ObjectId(id) });
@@ -39,7 +39,7 @@ export async function PUT(req, context) {
   try {
     const { id } = await context.params;
 
-    const { db, client } = await db();
+    const { db, client } = await mongoConnect();
     const data = await req.json();
 
     const result = await db
@@ -66,7 +66,7 @@ export async function DELETE(req, context) {
   try {
     const { id } = await context.params;
 
-    const { db, client } = await db();
+    const { db, client } = await mongoConnect();
 
     const result = await db
       .collection("events")
