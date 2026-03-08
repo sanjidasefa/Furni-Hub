@@ -19,7 +19,6 @@ import {
 export default function Header() {
   const pathname = usePathname();
   const router = useRouter(); 
-  // TypeScript টাইপ সরিয়ে শুধুমাত্র useState(null) রাখা হয়েছে
   const [user, setUser] = useState(null); 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);

@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
-import { meouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Armchair, Mail, Lock, ArrowRight, Loader2 } from "lucide-react";
 import Link from "next/link";
 
 export default function LoginPage() {
-  const router = meouter();
+  const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const handleLogin = async (e) => {

@@ -1,13 +1,13 @@
 "use client";
 import { useEffect, useState } from "react";
-import { meouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { Loader2, PlusCircle, Image as ImageIcon, CheckCircle2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
 export default function AddProductPage() {
-  const router = meouter();
+  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [isAuthorized, setIsAuthorized] = useState(false);
   const [loading, setLoading] = useState(false);

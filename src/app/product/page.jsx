@@ -83,8 +83,7 @@ if (category !== "All")
           <option value="low">Price: Low-High</option>
           <option value="high">Price: High-Low</option>
         </select>
-      </div>
-
+     </div>
       {/* Product Grid */}
       {filteredItems.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -108,7 +107,6 @@ if (category !== "All")
                   </span>
                 </div>
               </div>
-
               <div className="p-6">
                 <h2 className="text-xl font-bold text-[#5D4037] truncate">
                   {item.title}

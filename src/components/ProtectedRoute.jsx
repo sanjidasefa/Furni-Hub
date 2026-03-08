@@ -1,11 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-import { meouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { getAuthme } from "@/service/getAuthUser";
 import { Loader2 } from "lucide-react";
 
 export default function ProtectedRoute({ children }) {
-  const router = meouter();
+  const router = useRouter();
   const [authorized, setAuthorized] = useState(false);
 
   useEffect(() => {
