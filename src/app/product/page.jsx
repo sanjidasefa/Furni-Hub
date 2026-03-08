@@ -3,6 +3,7 @@ import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import { Loader2, PackageOpen, Search } from "lucide-react";
 import Link from "next/link";
+
 export default function ProductListingPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -17,7 +18,7 @@ export default function ProductListingPage() {
         const data = await res.json();
         setProducts(Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error(err);
+        console.error("Fetch Error:", err);
       } finally {
         setLoading(false);
       }
@@ -29,12 +30,15 @@ export default function ProductListingPage() {
     let result = [...products];
     if (search)
       result = result.filter((p) =>
-        p.title.toLowerCase().includes(search.toLowerCase()),
+        p.title?.toLowerCase().includes(search.toLowerCase())
       );
-if (category !== "All")
-  result = result.filter((p) => p.priority.toLowerCase() === category.toLowerCase());
+    
+    if (category !== "All")
+      result = result.filter((p) => p.priority?.toLowerCase() === category.toLowerCase());
+
     if (sort === "low") result.sort((a, b) => a.price - b.price);
     if (sort === "high") result.sort((a, b) => b.price - a.price);
+    
     return result;
   }, [products, search, category, sort]);
 
@@ -56,12 +60,9 @@ if (category !== "All")
       {/* Control Bar */}
       <div className="sticky top-4 z-30 mb-10 flex flex-wrap gap-3 bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-sm border border-stone-100">
         <div className="relative flex-1 min-w-[200px]">
-          <Search
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400"
-            size={16}
-          />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-stone-400" size={16} />
           <input
-            placeholder="Search..."
+            placeholder="Search products..."
             className="w-full pl-10 pr-4 py-2 rounded-xl bg-stone-50 outline-none text-sm"
             onChange={(e) => setSearch(e.target.value)}
           />
@@ -83,7 +84,8 @@ if (category !== "All")
           <option value="low">Price: Low-High</option>
           <option value="high">Price: High-Low</option>
         </select>
-     </div>
+      </div>
+
       {/* Product Grid */}
       {filteredItems.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -95,7 +97,7 @@ if (category !== "All")
               <div className="relative h-64 m-2 rounded-[1.8rem] overflow-hidden">
                 <Image
                   src={item.imageUrl || "https://via.placeholder.com/400"}
-                  alt={item.title}
+                  alt={item.title || "Product Image"}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
@@ -108,19 +110,13 @@ if (category !== "All")
                 </div>
               </div>
               <div className="p-6">
-                <h2 className="text-xl font-bold text-[#5D4037] truncate">
-                  {item.title}
-                </h2>
-                <p className="text-stone-400 text-xs mt-1 mb-4 line-clamp-1">
-                  {item.shortDescription}
-                </p>
+                <h2 className="text-xl font-bold text-[#5D4037] truncate">{item.title}</h2>
+                <p className="text-stone-400 text-xs mt-1 mb-4 line-clamp-1">{item.shortDescription}</p>
                 <div className="flex justify-between items-center pt-4 border-t border-stone-50">
-                  <span className="text-2xl font-black text-[#5D4037]">
-                    ${item.price}
-                  </span>
+                  <span className="text-2xl font-black text-[#5D4037]">${item.price}</span>
                   <Link href={`/product/${item._id}`}>
                     <button className="bg-stone-100 text-[#5D4037] hover:bg-orange-600 hover:text-white px-5 py-2 rounded-lg text-xs font-bold transition-all">
-                      View Details ..
+                      View Details
                     </button>
                   </Link>
                 </div>
@@ -131,9 +127,7 @@ if (category !== "All")
       ) : (
         <div className="text-center py-20 bg-white rounded-[2rem] border-2 border-dashed border-stone-100">
           <PackageOpen size={48} className="mx-auto text-stone-200 mb-3" />
-          <p className="text-stone-400 font-medium text-sm">
-            No furniture matches your filter.
-          </p>
+          <p className="text-stone-400 font-medium text-sm">No furniture matches your filter.</p>
         </div>
       )}
     </div>
