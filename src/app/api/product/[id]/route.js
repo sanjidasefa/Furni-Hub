@@ -1,12 +1,18 @@
 import { getDb } from "@/lib/db"; 
-import Product from "@/models/Product";
+import { ObjectId } from "mongodb"; 
 import { NextResponse } from "next/server";
 
 export async function GET(req, { params }) {
   try {
     const { id } = await params;
-    await getDb(); 
-    const product = await Product.findById(id);    
+
+    if (!ObjectId.isValid(id)) {
+      return NextResponse.json({ error: "Invalid ID format" }, { status: 400 });
+    }
+    const db = await getDb(); 
+    const product = await db.collection("product-collection").findOne({
+      _id: new ObjectId(id)
+    });   
     if (!product) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 });
     }   
