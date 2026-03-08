@@ -31,8 +31,8 @@ export default function ProductListingPage() {
       result = result.filter((p) =>
         p.title.toLowerCase().includes(search.toLowerCase()),
       );
-    if (category !== "All")
-      result = result.filter((p) => p.priority === category);
+if (category !== "All")
+  result = result.filter((p) => p.priority.toLowerCase() === category.toLowerCase());
     if (sort === "low") result.sort((a, b) => a.price - b.price);
     if (sort === "high") result.sort((a, b) => b.price - a.price);
     return result;
