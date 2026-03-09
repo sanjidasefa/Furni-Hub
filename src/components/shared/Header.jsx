@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useSession, signOut } from "next-auth/react"; // NextAuth ইম্পোর্ট করুন
+import { useSession, signOut } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, 
@@ -20,7 +20,7 @@ import {
 
 export default function Header() {
   const pathname = usePathname();
-  const { data: session, status } = useSession(); // NextAuth সেশন হুক
+  const { data: session, status } = useSession(); 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -32,6 +32,8 @@ export default function Header() {
     { title: "Collections", url: "/product" },
     { title: "About", url: "/about" },
     { title: "Contact", url: "/contact" },
+    { title: "Testimonials", url: "/testimonials" },
+    { title: "create-product", url: "/dashboard/create-product" },
   ];
 
   if (!mounted) return <div className="h-20 bg-white" />;
