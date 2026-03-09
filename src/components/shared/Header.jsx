@@ -1,11 +1,13 @@
 "use client";
+
 import { useState, useEffect } from "react";
 import { 
   Armchair, Menu, X, LogOut, User, 
   PlusCircle, LayoutDashboard, ChevronDown 
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
+import { useSession, signOut } from "next-auth/react"; // NextAuth ইম্পোর্ট করুন
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu, 
@@ -18,39 +20,12 @@ import {
 
 export default function Header() {
   const pathname = usePathname();
-  const router = useRouter(); 
-  const [user, setUser] = useState(null); 
+  const { data: session, status } = useSession(); // NextAuth সেশন হুক
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
-
   useEffect(() => {
     setMounted(true);
-    const checkUser = async () => {
-      try {
-        const res = await fetch("/api/user");
-        if (res.ok) {
-          const data = await res.json();
-          setUser(data.me);
-        } else {
-          setUser(null);
-        }
-      } catch (error) {
-        setUser(null);
-      }
-    };
-    checkUser();
-  }, [pathname]);
-
-  const handleLogout = async () => {
-    try {
-      await fetch("/api/logout", { method: "POST" });
-      setUser(null);
-      setIsMenuOpen(false);
-      router.push("/login");
-    } catch (err) {
-      console.error("Logout failed:", err);
-    }
-  };
+  }, []);
 
   const navLinks = [
     { title: "Home", url: "/" },
@@ -65,6 +40,7 @@ export default function Header() {
     <header className="sticky top-0 z-[100] w-full border-b border-orange-100 bg-white/95 backdrop-blur-sm shadow-sm">
       <div className="container mx-auto px-4 h-20 flex items-center justify-between">
         
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
           <div className="bg-orange-600 p-2 rounded-xl text-white">
             <Armchair size={24} />
@@ -72,6 +48,7 @@ export default function Header() {
           <span className="font-black text-2xl text-[#5D4037]">FurniHub</span>
         </Link>
 
+        {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
           {navLinks.map((item) => (
             <Link 
@@ -86,8 +63,9 @@ export default function Header() {
           ))}
         </nav>
 
+        {/* Auth Actions */}
         <div className="flex items-center gap-3">
-          {user ? (
+          {session ? (
             <div className="hidden md:block">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -95,15 +73,17 @@ export default function Header() {
                     <div className="w-8 h-8 rounded-full bg-orange-100 flex items-center justify-center text-orange-600">
                       <User size={18} />
                     </div>
-                    <span className="text-sm font-semibold text-[#5D4037]">{user?.name || 'Account'}</span>
+                    <span className="text-sm font-semibold text-[#5D4037]">
+                      {session.user?.name || 'Account'}
+                    </span>
                     <ChevronDown size={14} className="text-stone-400" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 mt-2 rounded-xl">
                   <DropdownMenuLabel>
                     <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">{user?.name}</p>
-                      <p className="text-xs leading-none text-muted-foreground">{user?.email}</p>
+                      <p className="text-sm font-medium leading-none">{session.user?.name}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{session.user?.email}</p>
                     </div>
                   </DropdownMenuLabel>
                   <DropdownMenuSeparator />
@@ -118,7 +98,10 @@ export default function Header() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout} className="text-red-600 cursor-pointer gap-2 font-bold focus:bg-red-50 focus:text-red-600">
+                  <DropdownMenuItem 
+                    onClick={() => signOut({ callbackUrl: "/login" })} 
+                    className="text-red-600 cursor-pointer gap-2 font-bold focus:bg-red-50 focus:text-red-600"
+                  >
                     <LogOut size={16} /> Logout
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -131,6 +114,7 @@ export default function Header() {
             </div>
           )}
 
+          {/* Mobile Toggle */}
           <button className="md:hidden p-2 text-orange-600" onClick={() => setIsMenuOpen(!isMenuOpen)}>
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
@@ -153,7 +137,7 @@ export default function Header() {
             </Link>
           ))}
           <div className="pt-4 mt-2 border-t border-orange-50">
-            {user ? (
+            {session ? (
               <div className="flex flex-col gap-2">
                 <Link href="/dashboard/create-product" onClick={() => setIsMenuOpen(false)} className="p-3 font-bold text-orange-600 flex items-center gap-2 hover:bg-orange-50 rounded-lg">
                   <PlusCircle size={20}/> Add Product
@@ -161,8 +145,11 @@ export default function Header() {
                 <Link href="/dashboard/manage-product" onClick={() => setIsMenuOpen(false)} className="p-3 font-bold text-orange-600 flex items-center gap-2 hover:bg-orange-50 rounded-lg">
                   <LayoutDashboard size={20}/> Manage Products
                 </Link>
-                <Button onClick={handleLogout} className="w-full bg-red-500 hover:bg-red-600 text-white py-6 rounded-xl font-bold flex items-center justify-center gap-2 mt-2">
-                  <LogOut size={18} /> Logout ({user.name})
+                <Button 
+                  onClick={() => signOut({ callbackUrl: "/login" })} 
+                  className="w-full bg-red-500 hover:bg-red-600 text-white py-6 rounded-xl font-bold flex items-center justify-center gap-2 mt-2"
+                >
+                  <LogOut size={18} /> Logout ({session.user?.name})
                 </Button>
               </div>
             ) : (

@@ -43,13 +43,25 @@ export default function ManageProducts() {
             </tr>
           </thead>
           <tbody>
-            {products.map((p) => (
-  <tr key={p._id}>
-    <td className="p-6">{p.title}</td>
-  
-    <Button onClick={() => deleteProduct(p._id)}> 
-      <Trash2 size={18} />
-    </Button>
+          {products.map((p) => (
+  <tr key={p._id} className="border-b border-orange-50 hover:bg-stone-50 transition-colors">
+    <td className="p-6 font-medium">{p.title}</td>
+    <td className="p-6 text-stone-500">{p.category || "N/A"}</td>
+    <td className="p-6 font-bold text-orange-600">${p.price}</td>
+    <td className="p-6">
+      <div className="flex gap-3">  
+        <Button variant="outline" className="text-blue-600 border-blue-100">
+          <Edit size={18} />
+        </Button>
+        <Button 
+          variant="destructive" 
+          onClick={() => deleteProduct(p._id)}
+          className="bg-red-50 hover:bg-red-100 text-red-600 border-none"
+        >
+          <Trash2 size={18} />
+        </Button>
+      </div>
+    </td>
   </tr>
 ))}
           </tbody>
