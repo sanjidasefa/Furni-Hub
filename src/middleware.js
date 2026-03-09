@@ -1,14 +1,6 @@
-import { NextResponse } from "next/server";
-
-export function middleware(request) {
-  const token = request.cookies.get("token")?.value;
-  const { pathname } = request.nextUrl;
-  if (pathname.startsWith("/dashboard") && !token) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-  return NextResponse.next();
-}
-
-export const config = {
-  matcher: ["/dashboard/:path*"],
-};
+import { withAuth } from "next-auth/middleware";
+export default withAuth({
+  pages: { signIn: "/login" },
+  secret: process.env.NEXTAUTH_SECRET,
+});
+export const config = { matcher: ["/dashboard/:path*"] };

@@ -4,31 +4,44 @@ import { NextResponse } from "next/server";
 
 export async function POST(req) {
   try {
-    const database = await db();
-    const { mename, email, password } = await req.json();
-
-    if (!mename || !email || !password) {
-      return NextResponse.json({ error: "Sob field puron korun" }, { status: 400 });
+    const database = await getDb();
+    const { name, email, password } = await req.json();
+    if (!name || !email || !password) {
+      return NextResponse.json(
+        { error: "All fields are required" }, 
+        { status: 400 }
+      );
     }
-
-    const existingme = await database.collection("me-collection").findOne({ email });
-    if (existingme) {
-      return NextResponse.json({ error: "Ei email diye account ache" }, { status: 400 });
+    const existingUser = await database.collection("user-collection").findOne({ email });
+    if (existingUser) {
+      return NextResponse.json(
+        { error: "Account already exists with this email" }, 
+        { status: 400 }
+      );
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
-    await database.collection("me-collection").insertOne({
-      mename,
+    const newUser = {
+      name,
       email,
-      password: hashedPassword,
       role: "admin",
       createdAt: new Date(),
+    };
+    const result = await database.collection("user-collection").insertOne({
+      ...newUser,
+      password: hashedPassword,
     });
-
-    return NextResponse.json({ message: "Account create hoyeche!" }, { status: 201 });
+    return NextResponse.json(
+      { 
+        message: "Account created successfully!",
+        user: { id: result.insertedId, ...newUser }
+      }, 
+      { status: 201 }
+    );
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: "Server Error" }, { status: 500 });
+    console.error("Signup API Error:", error); 
+    return NextResponse.json(
+      { error: "Internal Server Error" }, 
+      { status: 500 }
+    );
   }
 }

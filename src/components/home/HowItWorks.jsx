@@ -1,10 +1,9 @@
-import { meCheck, Armchair, Truck } from "lucide-react";
-
+import { UserCheck, Armchair, Truck } from "lucide-react"; 
 const steps = [
   {
     title: "Create Account",
     description: "Sign up securely to save your favorite designs and track your orders.",
-    icon: <meCheck className="h-8 w-8 text-orange-600" />,
+    icon: <UserCheck className="h-8 w-8 text-orange-600" />, 
   },
   {
     title: "Choose Furniture",
@@ -32,7 +31,6 @@ export default function HowItWorks() {
         </div>
         <div className="grid gap-10 md:grid-cols-3 relative">
           <div className="hidden md:block absolute top-1/2 left-0 w-full h-px bg-orange-100 -z-10" />
-
           {steps.map((step, i) => (
             <div 
               key={i} 
@@ -40,10 +38,11 @@ export default function HowItWorks() {
             >
               <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-[#5D4037] text-white w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm shadow-lg">
                 0{i + 1}
-              </div>
+              </div>   
               <div className="mb-6 inline-flex p-4 rounded-2xl bg-orange-50 group-hover:bg-orange-100 transition-colors">
                 {step.icon}
               </div>
+              
               <h3 className="text-xl font-bold text-[#5D4037] mb-3">{step.title}</h3>
               <p className="text-stone-500 text-sm leading-relaxed">
                 {step.description}
