@@ -83,7 +83,7 @@ export default function ManageProducts() {
       </div>
 
       {/* --- Desktop View (Table) --- */}
-      <div className="hidden md:block bg-white rounded-[2rem] border border-orange-100 overflow-hidden shadow-sm">
+      <div className="hidden md:block bg-white rounded-4xl border border-orange-100 overflow-hidden shadow-sm">
         <table className="w-full text-left border-collapse">
           <thead className="bg-orange-50 text-[#5D4037] font-bold">
             <tr>
@@ -101,7 +101,7 @@ export default function ManageProducts() {
                     <img
                       src={p.imageUrl || "/placeholder.png"}
                       className="h-10 w-10 rounded-lg object-cover"
-                      alt={p.title || "product"} 
+                      alt={p.title} 
                     />
                     <span className="font-bold text-[#5D4037]">{p.title}</span>
                   </div>
@@ -142,10 +142,14 @@ export default function ManageProducts() {
               </div>
               <span className="font-black text-orange-600">${p.price}</span>
             </div>
-            <div className="flex gap-2 pt-4 border-t border-orange-50">
-               <Button onClick={() => setEditingProduct(p)} className="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 border-none shadow-none">Edit</Button>
-               <Button onClick={() => deleteProduct(p._id)} variant="destructive" className="flex-1">Delete</Button>
-            </div>
+             <div className="flex justify-between">
+                    <Button variant="outline" onClick={() => setEditingProduct(p)} className="text-blue-600 border-blue-100 hover:bg-blue-50">
+                      <Edit size={18} />
+                    </Button>
+                    <Button variant="destructive" onClick={() => deleteProduct(p._id)} className="bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border-none">
+                      <Trash2 size={18} />
+                    </Button>
+                  </div>
           </div>
         ))}
       </div>
