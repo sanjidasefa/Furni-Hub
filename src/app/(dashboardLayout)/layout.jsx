@@ -1,3 +1,4 @@
+// app/dashboard/layout.jsx
 "use client";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -13,21 +14,17 @@ export default function DashboardLayout({ children }) {
       router.push("/login");
     }
   }, [status, router]);
-
   if (status === "loading") {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-[#FDFBF9]">
         <Loader2 className="animate-spin text-orange-600 mb-4" size={48} />
         <p className="text-[#5D4037] font-bold animate-pulse uppercase tracking-widest text-sm">
-          Securing your session...
+          Checking permission...
         </p>
       </div>
     );
   }
+  if (!session) return null;
 
-  if (status === "authenticated") {
-    return <>{children}</>;
-  }
-
-  return null;
+  return <>{children}</>;
 }

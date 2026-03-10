@@ -20,20 +20,20 @@ import {
 
 export default function Header() {
   const pathname = usePathname();
-  const { data: session, status } = useSession(); 
+  const { data: session } = useSession(); 
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
+
   useEffect(() => {
     setMounted(true);
   }, []);
-
   const navLinks = [
     { title: "Home", url: "/" },
     { title: "Collections", url: "/product" },
     { title: "About", url: "/about" },
     { title: "Contact", url: "/contact" },
-    { title: "Testimonials", url: "/testimonials" },
-    { title: "create-product", url: "/dashboard/create-product" },
+    { title: "Create Product", url: "/dashboard/create-product" },
+    { title: "Manage Product", url: "/dashboard/manage-product" },
   ];
 
   if (!mounted) return <div className="h-20 bg-white" />;
@@ -52,17 +52,21 @@ export default function Header() {
 
         {/* Desktop Navigation */}
         <nav className="hidden md:flex items-center gap-8">
-          {navLinks.map((item) => (
-            <Link 
-              key={item.url} 
-              href={item.url} 
-              className={`text-sm font-bold transition-colors ${
-                pathname === item.url ? "text-orange-600" : "text-[#5D4037] hover:text-orange-600"
-              }`}
-            >
-              {item.title}
-            </Link>
-          ))}
+          {navLinks.map((item) => {
+            const isDashboardLink = item.url.startsWith("/dashboard");
+            const finalUrl = (!session && isDashboardLink) ? "/login" : item.url;
+            return (
+              <Link 
+                key={item.url} 
+                href={finalUrl} 
+                className={`text-sm font-bold transition-colors ${
+                  pathname === item.url ? "text-orange-600" : "text-[#5D4037] hover:text-orange-600"
+                }`}
+              >
+                {item.title}
+              </Link>
+            );
+          })}
         </nav>
 
         {/* Auth Actions */}
@@ -128,32 +132,30 @@ export default function Header() {
         isMenuOpen ? "top-20 opacity-100" : "top-[-600px] opacity-0 pointer-events-none"
       }`}>
         <div className="p-4 flex flex-col gap-2">
-          {navLinks.map((item) => (
-            <Link 
-              key={item.url} 
-              href={item.url} 
-              onClick={() => setIsMenuOpen(false)}
-              className="p-3 font-bold hover:bg-orange-50 rounded-lg text-[#5D4037]"
-            >
-              {item.title}
-            </Link>
-          ))}
+          {navLinks.map((item) => {
+            const isDashboardLink = item.url.startsWith("/dashboard");
+            const finalUrl = (!session && isDashboardLink) ? "/login" : item.url;
+
+            return (
+              <Link 
+                key={item.url} 
+                href={finalUrl} 
+                onClick={() => setIsMenuOpen(false)}
+                className="p-3 font-bold hover:bg-orange-50 rounded-lg text-[#5D4037]"
+              >
+                {item.title}
+              </Link>
+            );
+          })}
+          
           <div className="pt-4 mt-2 border-t border-orange-50">
             {session ? (
-              <div className="flex flex-col gap-2">
-                <Link href="/dashboard/create-product" onClick={() => setIsMenuOpen(false)} className="p-3 font-bold text-orange-600 flex items-center gap-2 hover:bg-orange-50 rounded-lg">
-                  <PlusCircle size={20}/> Add Product
-                </Link>
-                <Link href="/dashboard/manage-product" onClick={() => setIsMenuOpen(false)} className="p-3 font-bold text-orange-600 flex items-center gap-2 hover:bg-orange-50 rounded-lg">
-                  <LayoutDashboard size={20}/> Manage Products
-                </Link>
-                <Button 
-                  onClick={() => signOut({ callbackUrl: "/login" })} 
-                  className="w-full bg-red-500 hover:bg-red-600 text-white py-6 rounded-xl font-bold flex items-center justify-center gap-2 mt-2"
-                >
-                  <LogOut size={18} /> Logout ({session.user?.name})
-                </Button>
-              </div>
+              <Button 
+                onClick={() => signOut({ callbackUrl: "/login" })} 
+                className="w-full bg-red-500 hover:bg-red-600 text-white py-6 rounded-xl font-bold flex items-center justify-center gap-2 mt-2"
+              >
+                <LogOut size={18} /> Logout ({session.user?.name})
+              </Button>
             ) : (
               <div className="flex flex-col gap-3">
                 <Link href="/login" onClick={() => setIsMenuOpen(false)}>
