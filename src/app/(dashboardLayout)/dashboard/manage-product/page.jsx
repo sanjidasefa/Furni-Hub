@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Trash2, Edit, Package, Loader2, X } from "lucide-react";
@@ -10,12 +10,7 @@ export default function ManageProducts() {
   const [loading, setLoading] = useState(true);
   const [editingProduct, setEditingProduct] = useState(null);
   const [updateLoading, setUpdateLoading] = useState(false);
-
-  useEffect(() => {
-    fetchProducts();
-  }, []);
-
-  async function fetchProducts() {
+  const fetchProducts = useCallback(async () => {
     try {
       const res = await fetch("/api/product");
       const data = await res.json();
@@ -26,14 +21,18 @@ export default function ManageProducts() {
     } finally {
       setLoading(false);
     }
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchProducts();
+  }, [fetchProducts]);
 
   const deleteProduct = async (id) => {
     if (confirm("Are you sure you want to delete this furniture?")) {
       try {
         const res = await fetch(`/api/product/${id}`, { method: "DELETE" });
         if (res.ok) {
-          setProducts(products.filter((p) => p._id !== id));
+          setProducts((prev) => prev.filter((p) => p._id !== id));
           toast.success("Product deleted successfully!");
         }
       } catch (err) {
@@ -100,9 +99,9 @@ export default function ManageProducts() {
                 <td className="p-6">
                   <div className="flex items-center gap-3">
                     <img
-                      src={p.imageUrl || ""}
+                      src={p.imageUrl || "/placeholder.png"}
                       className="h-10 w-10 rounded-lg object-cover"
-                      alt={p.title}
+                      alt={p.title || "product"} 
                     />
                     <span className="font-bold text-[#5D4037]">{p.title}</span>
                   </div>
@@ -125,13 +124,17 @@ export default function ManageProducts() {
         </table>
       </div>
 
-      {/* --- Mobile View (Cards) --- */}
+      {/* --- Mobile View --- */}
       <div className="grid grid-cols-1 gap-4 md:hidden">
         {products.map((p) => (
           <div key={p._id} className="bg-white p-5 rounded-3xl border border-orange-100 shadow-sm">
             <div className="flex justify-between items-center mb-4">
               <div className="flex items-center gap-3">
-                <img src={p.imageUrl || "/placeholder.png"} className="h-12 w-12 rounded-xl object-cover" alt="" />
+                <img 
+                  src={p.imageUrl || "/placeholder.png"} 
+                  className="h-12 w-12 rounded-xl object-cover" 
+                  alt={p.title || "product"} 
+                />
                 <div>
                    <h3 className="font-bold text-[#5D4037]">{p.title}</h3>
                    <p className="text-xs text-stone-400">{p.category || "General"}</p>
@@ -151,7 +154,11 @@ export default function ManageProducts() {
       {editingProduct && (
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-all">
           <div className="bg-white rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl relative">
-            <button onClick={() => setEditingProduct(null)} className="absolute right-6 top-6 p-2 hover:bg-stone-100 rounded-full transition-colors">
+            <button 
+              type="button"
+              onClick={() => setEditingProduct(null)} 
+              className="absolute right-6 top-6 p-2 hover:bg-stone-100 rounded-full transition-colors"
+            >
               <X className="text-stone-400 h-5 w-5" />
             </button>
             <h2 className="text-2xl font-black text-[#5D4037] mb-6">Edit Furniture</h2>
@@ -159,15 +166,28 @@ export default function ManageProducts() {
             <form onSubmit={handleUpdate} className="space-y-5">
               <div className="space-y-1.5">
                 <label className="text-xs font-black text-stone-400 uppercase ml-1">Title</label>
-                <Input value={editingProduct.title} onChange={(e) => setEditingProduct({...editingProduct, title: e.target.value})} className="rounded-xl border-stone-200" />
+                <Input 
+                  value={editingProduct.title || ""} 
+                  onChange={(e) => setEditingProduct({...editingProduct, title: e.target.value})} 
+                  className="rounded-xl border-stone-200" 
+                />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-black text-stone-400 uppercase ml-1">Price ($)</label>
-                <Input type="number" value={editingProduct.price} onChange={(e) => setEditingProduct({...editingProduct, price: e.target.value})} className="rounded-xl border-stone-200" />
+                <Input 
+                  type="number" 
+                  value={editingProduct.price || ""} 
+                  onChange={(e) => setEditingProduct({...editingProduct, price: e.target.value})} 
+                  className="rounded-xl border-stone-200" 
+                />
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-black text-stone-400 uppercase ml-1">Image URL</label>
-                <Input value={editingProduct.imageUrl || ""} onChange={(e) => setEditingProduct({...editingProduct, imageUrl: e.target.value})} className="rounded-xl border-stone-200" />
+                <Input 
+                  value={editingProduct.imageUrl || ""} 
+                  onChange={(e) => setEditingProduct({...editingProduct, imageUrl: e.target.value})} 
+                  className="rounded-xl border-stone-200" 
+                />
               </div>
               <div className="pt-4 flex gap-3">
                 <Button type="submit" disabled={updateLoading} className="flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-xl h-12 font-bold">
