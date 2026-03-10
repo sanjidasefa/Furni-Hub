@@ -11,7 +11,7 @@ export const authOptions = {
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
     CredentialsProvider({
-      name: "Credentials", // এটি যোগ করা ভালো
+      name: "Credentials",
       credentials: {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
@@ -23,7 +23,6 @@ export const authOptions = {
         const user = await db.collection("user-collection").findOne({ email: credentials.email });
         
         if (user && await bcrypt.compare(credentials.password, user.password)) {
-          // রিটার্ন করা অবজেক্টটি অবশ্যই স্ট্রিং আইডি হতে হবে
           return { 
             id: user._id.toString(), 
             name: user.name, 
@@ -35,23 +34,47 @@ export const authOptions = {
       }
     })
   ],
-  callbacks: {
-    // এটি করলে আপনি সেশন থেকে ইউজারের আইডি এবং রোল পাবেন
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-        token.role = user.role;
+callbacks: {
+  async signIn({ user, account }) {
+    if (account.provider === "google") {
+      try {
+        const db = await getDb();
+        const existingUser = await db.collection("user-collection").findOne({ email: user.email });
+        
+        if (!existingUser) {
+          await db.collection("user-collection").insertOne({
+            name: user.name,
+            email: user.email,
+            image: user.image,
+            role: "admin",
+            createdAt: new Date()
+          });
+        }
+        return true;
+      } catch (error) {
+        console.error("Error saving google user:", error);
+        return false;
       }
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id;
-        session.user.role = token.role;
-      }
-      return session;
-    },
+    }
+    return true; 
   },
+  
+  async jwt({ token, user }) {
+    if (user) {
+      token.id = user.id;
+      token.role = user.role || "admin"; 
+    }
+    return token;
+  },
+  
+  async session({ session, token }) {
+    if (session.user) {
+      session.user.id = token.id;
+      session.user.role = token.role;
+    }
+    return session;
+  },
+},
   pages: {
     signIn: "/login",
   },
