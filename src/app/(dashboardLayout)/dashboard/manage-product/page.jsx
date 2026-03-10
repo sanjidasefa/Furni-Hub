@@ -8,7 +8,7 @@ import { toast } from "react-hot-toast";
 export default function ManageProducts() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingProduct, setEditingProduct] = useState(null); // এডিট করার জন্য স্টেট
+  const [editingProduct, setEditingProduct] = useState(null);
   const [updateLoading, setUpdateLoading] = useState(false);
 
   useEffect(() => {
@@ -28,7 +28,6 @@ export default function ManageProducts() {
     }
   }
 
-  // --- Delete Function ---
   const deleteProduct = async (id) => {
     if (confirm("Are you sure you want to delete this furniture?")) {
       try {
@@ -43,7 +42,6 @@ export default function ManageProducts() {
     }
   };
 
-  // --- Update Function ---
   const handleUpdate = async (e) => {
     e.preventDefault();
     setUpdateLoading(true);
@@ -57,7 +55,7 @@ export default function ManageProducts() {
       if (res.ok) {
         toast.success("Product updated!");
         setEditingProduct(null);
-        fetchProducts(); 
+        fetchProducts();
       }
     } catch (err) {
       toast.error("Update failed");
@@ -85,7 +83,7 @@ export default function ManageProducts() {
         </div>
       </div>
 
-      {/* Table View */}
+      {/* --- Desktop View (Table) --- */}
       <div className="hidden md:block bg-white rounded-[2rem] border border-orange-100 overflow-hidden shadow-sm">
         <table className="w-full text-left border-collapse">
           <thead className="bg-orange-50 text-[#5D4037] font-bold">
@@ -102,9 +100,9 @@ export default function ManageProducts() {
                 <td className="p-6">
                   <div className="flex items-center gap-3">
                     <img
-                      src={p.imageUrl || "/placeholder.png"}
+                      src={p.imageUrl || ""}
                       className="h-10 w-10 rounded-lg object-cover"
-                      alt=""
+                      alt={p.title}
                     />
                     <span className="font-bold text-[#5D4037]">{p.title}</span>
                   </div>
@@ -113,18 +111,10 @@ export default function ManageProducts() {
                 <td className="p-6 font-black text-orange-600">${p.price}</td>
                 <td className="p-6 text-center">
                   <div className="flex justify-center gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => setEditingProduct(p)}
-                      className="text-blue-600 border-blue-100 hover:bg-blue-50"
-                    >
+                    <Button variant="outline" onClick={() => setEditingProduct(p)} className="text-blue-600 border-blue-100 hover:bg-blue-50">
                       <Edit size={18} />
                     </Button>
-                    <Button
-                      variant="destructive"
-                      onClick={() => deleteProduct(p._id)}
-                      className="bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border-none transition-all"
-                    >
+                    <Button variant="destructive" onClick={() => deleteProduct(p._id)} className="bg-red-50 hover:bg-red-600 hover:text-white text-red-600 border-none">
                       <Trash2 size={18} />
                     </Button>
                   </div>
@@ -135,45 +125,54 @@ export default function ManageProducts() {
         </table>
       </div>
 
-      {/* Edit Modal (এটি এডিট বাটনে ক্লিক করলে দেখা যাবে) */}
-      {editingProduct && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl p-8 max-w-md w-full shadow-2xl">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-xl font-bold text-[#5D4037]">Edit Product</h2>
-              <button onClick={() => setEditingProduct(null)}><X className="text-stone-400" /></button>
+      {/* --- Mobile View (Cards) --- */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {products.map((p) => (
+          <div key={p._id} className="bg-white p-5 rounded-3xl border border-orange-100 shadow-sm">
+            <div className="flex justify-between items-center mb-4">
+              <div className="flex items-center gap-3">
+                <img src={p.imageUrl || "/placeholder.png"} className="h-12 w-12 rounded-xl object-cover" alt="" />
+                <div>
+                   <h3 className="font-bold text-[#5D4037]">{p.title}</h3>
+                   <p className="text-xs text-stone-400">{p.category || "General"}</p>
+                </div>
+              </div>
+              <span className="font-black text-orange-600">${p.price}</span>
             </div>
-            <form onSubmit={handleUpdate} className="space-y-4">
-              <div>
-                <label className="text-xs font-bold text-stone-500 uppercase">Product Title</label>
-                <Input 
-                  value={editingProduct.title}
-                  onChange={(e) => setEditingProduct({...editingProduct, title: e.target.value})}
-                  className="mt-1"
-                />
+            <div className="flex gap-2 pt-4 border-t border-orange-50">
+               <Button onClick={() => setEditingProduct(p)} className="flex-1 bg-blue-50 text-blue-600 hover:bg-blue-100 border-none shadow-none">Edit</Button>
+               <Button onClick={() => deleteProduct(p._id)} variant="destructive" className="flex-1">Delete</Button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* --- Edit Modal --- */}
+      {editingProduct && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50 transition-all">
+          <div className="bg-white rounded-[2.5rem] p-8 max-w-md w-full shadow-2xl relative">
+            <button onClick={() => setEditingProduct(null)} className="absolute right-6 top-6 p-2 hover:bg-stone-100 rounded-full transition-colors">
+              <X className="text-stone-400 h-5 w-5" />
+            </button>
+            <h2 className="text-2xl font-black text-[#5D4037] mb-6">Edit Furniture</h2>
+            
+            <form onSubmit={handleUpdate} className="space-y-5">
+              <div className="space-y-1.5">
+                <label className="text-xs font-black text-stone-400 uppercase ml-1">Title</label>
+                <Input value={editingProduct.title} onChange={(e) => setEditingProduct({...editingProduct, title: e.target.value})} className="rounded-xl border-stone-200" />
               </div>
-              <div>
-                <label className="text-xs font-bold text-stone-500 uppercase">Price ($)</label>
-                <Input 
-                  type="number"
-                  value={editingProduct.price}
-                  onChange={(e) => setEditingProduct({...editingProduct, price: e.target.value})}
-                  className="mt-1"
-                />
+              <div className="space-y-1.5">
+                <label className="text-xs font-black text-stone-400 uppercase ml-1">Price ($)</label>
+                <Input type="number" value={editingProduct.price} onChange={(e) => setEditingProduct({...editingProduct, price: e.target.value})} className="rounded-xl border-stone-200" />
               </div>
-              <div>
-                <label className="text-xs font-bold text-stone-500 uppercase">Image URL</label>
-                <Input 
-                  value={editingProduct.imageUrl || ""}
-                  onChange={(e) => setEditingProduct({...editingProduct, imageUrl: e.target.value})}
-                  className="mt-1"
-                />
+              <div className="space-y-1.5">
+                <label className="text-xs font-black text-stone-400 uppercase ml-1">Image URL</label>
+                <Input value={editingProduct.imageUrl || ""} onChange={(e) => setEditingProduct({...editingProduct, imageUrl: e.target.value})} className="rounded-xl border-stone-200" />
               </div>
               <div className="pt-4 flex gap-3">
-                <Button type="submit" disabled={updateLoading} className="flex-1 bg-[#5D4037]">
-                  {updateLoading ? "Saving..." : "Save Changes"}
+                <Button type="submit" disabled={updateLoading} className="flex-1 bg-orange-600 hover:bg-orange-700 text-white rounded-xl h-12 font-bold">
+                  {updateLoading ? <Loader2 className="animate-spin" /> : "Save Changes"}
                 </Button>
-                <Button type="button" variant="outline" onClick={() => setEditingProduct(null)}>Cancel</Button>
               </div>
             </form>
           </div>
@@ -181,7 +180,7 @@ export default function ManageProducts() {
       )}
 
       {products.length === 0 && !loading && (
-        <div className="text-center py-20 text-stone-400">Inventory is empty.</div>
+        <div className="text-center py-20 text-stone-400 font-medium">No inventory found. Start adding some!</div>
       )}
     </div>
   );
